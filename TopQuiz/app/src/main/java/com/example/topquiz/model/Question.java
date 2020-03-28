@@ -1,24 +1,29 @@
 package com.example.topquiz.model;
 
-import android.os.Build;
+import android.util.Pair;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 public class Question {
 
     private String mQuestion;
-    private Map<Integer, String> mAnswerMap;
+    private List<Pair<Integer, String>> mAnswerList;
     private int mAnswerCorrectIndex;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public Question(String mQuestion, List<String> mAnswerList, int mAnswerCorrectIndex) {
         this.mQuestion = mQuestion;
         this.mAnswerCorrectIndex = mAnswerCorrectIndex;
+        this.mAnswerList= new ArrayList<>();
         for( String answer : mAnswerList ) {
-            this.mAnswerMap.put(mAnswerMap.size()+1, answer);
+            this.mAnswerList.add( new Pair<Integer, String>(this.mAnswerList.size(), answer));
         }
     }
 
@@ -30,11 +35,11 @@ public class Question {
         this.mQuestion = mQuestion;
     }
 
-    public List<String> getmAnswerList() {
+    public List<Pair<Integer, String>> getmAnswerList() {
         return mAnswerList;
     }
 
-    public void setmAnswerList(List<String> mAnswerList) {
+    public void setmAnswerList(List<Pair<Integer, String>> mAnswerList) {
         this.mAnswerList = mAnswerList;
     }
 
@@ -48,10 +53,14 @@ public class Question {
 
     @Override
     public String toString() {
-        return "Question{" +
-                "mQuestion='" + mQuestion + '\'' +
-                ", mChoiceList=" + mAnswerList +
-                ", mAnswerIndex=" + mAnswerCorrectIndex +
-                '}';
+        String itemList = "";
+        for( Pair item : mAnswerList) {
+            itemList += (itemList.isEmpty() ? "" :  "\n") +
+                    item.first + " - " + item.second;
+        }
+        return "Question:" +
+                " mQuestion='" + mQuestion +
+                " mAnswerIndex=" + mAnswerCorrectIndex +
+                " mAnswerList=\n" + itemList;
     }
 }

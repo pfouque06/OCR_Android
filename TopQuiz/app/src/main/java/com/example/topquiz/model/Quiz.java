@@ -1,5 +1,7 @@
 package com.example.topquiz.model;
 
+import android.util.Pair;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -42,5 +44,16 @@ public class Quiz {
     void resetQuiz() {
         Collections.shuffle(mQuestionList);
         mQuestionIndex = 0;
+    }
+
+    @Override
+    public String toString() {
+        String itemList = "";
+        for( Question item : mQuestionList) {
+            itemList += (itemList.isEmpty() ? "" :  "\n") + item.toString();
+        }
+        return "Quiz: " +
+                " mQuestionIndex=" + mQuestionIndex +
+                " mQuestionList=\n" + itemList;
     }
 }

@@ -82,6 +82,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // generate Quiz
         mQuiz = this.generateQuiz();
+        System.out.println("mQuiz: " + mQuiz);
 
         if (savedInstanceState != null) {
             System.out.println(">>> Game/Bundle info: " + savedInstanceState);
@@ -218,10 +219,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         //String questionText = question.getmQuestion() + "\n[" + (question.getmAnswerCorrectIndex() + 1) + "]";
         String questionText = question.getmQuestion();
         mQuestionText.setText(questionText);
-        mAnswerButton01.setText(question.getmAnswerList().get(0));
-        mAnswerButton02.setText(question.getmAnswerList().get(1));
-        mAnswerButton03.setText(question.getmAnswerList().get(2));
-        mAnswerButton04.setText(question.getmAnswerList().get(3));
+        mAnswerButton01.setText(question.getmAnswerList().get(0).second);
+        mAnswerButton02.setText(question.getmAnswerList().get(1).second);
+        mAnswerButton03.setText(question.getmAnswerList().get(2).second);
+        mAnswerButton04.setText(question.getmAnswerList().get(3).second);
     }
 
     private void displayName() {

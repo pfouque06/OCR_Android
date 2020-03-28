@@ -2,15 +2,9 @@ package com.example.topquiz.model;
 
 import android.util.Pair;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 public class Question {
 
@@ -23,44 +17,48 @@ public class Question {
         this.mAnswerCorrectIndex = mAnswerCorrectIndex;
         this.mAnswerList= new ArrayList<>();
         for( String answer : mAnswerList ) {
-            this.mAnswerList.add( new Pair<Integer, String>(this.mAnswerList.size(), answer));
+            this.mAnswerList.add(new Pair<>(this.mAnswerList.size(), answer));
         }
     }
 
-    public String getmQuestion() {
+    public String getQuestion() {
         return mQuestion;
     }
 
-    public void setmQuestion(String mQuestion) {
-        this.mQuestion = mQuestion;
-    }
-
-    public List<Pair<Integer, String>> getmAnswerList() {
+    public List<Pair<Integer, String>> getAnswerList() {
         return mAnswerList;
     }
 
-    public void setmAnswerList(List<Pair<Integer, String>> mAnswerList) {
-        this.mAnswerList = mAnswerList;
-    }
-
-    public int getmAnswerCorrectIndex() {
+    public int getAnswerCorrectIndex() {
         return mAnswerCorrectIndex;
     }
 
-    public void setmAnswerCorrectIndex(int mAnswerCorrectIndex) {
-        this.mAnswerCorrectIndex = mAnswerCorrectIndex;
+    public int getAnswerIndex(int index) {
+        return this.mAnswerList.get(index).first;
     }
 
+    public String getAnswerString(int index) {
+        return this.mAnswerList.get(index).second;
+    }
+
+    public int getAnswerListSize() {
+        return this.mAnswerList.size();
+    }
+
+    public void shuffle() {
+        Collections.shuffle(mAnswerList);
+    }
     @Override
     public String toString() {
         String itemList = "";
         for( Pair item : mAnswerList) {
             itemList += (itemList.isEmpty() ? "" :  "\n") +
-                    item.first + " - " + item.second;
+                    "(" + item.first + ")" +
+                    ( (int) item.first == mAnswerCorrectIndex ? "*" : " ") +
+                    item.second;
         }
-        return "Question:" +
-                " mQuestion='" + mQuestion +
-                " mAnswerIndex=" + mAnswerCorrectIndex +
-                " mAnswerList=\n" + itemList;
+        return "Question: " + mQuestion +
+                " answerCorrectIndex=" + mAnswerCorrectIndex +
+                " answerList=\n" + itemList;
     }
 }

@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             // Fetch the score from the Intent
             System.out.println(">>> Game Intent: " + data);
             mUser.setmScore(data.getIntExtra(GameActivity.GAME_ACTIVITY_SCORE, 0));
-            mLastScoreText.setText(mUser.getmFirstName() + ", Your previous score is " + mUser.getmScore() + " points");
+            mLastScoreText.setText(mUser.getmFirstName() + ", your previous score is " + mUser.getmScore() + " points");
             System.out.println(">>> previous score is: " + mUser.getmScore());
 
             // handle display

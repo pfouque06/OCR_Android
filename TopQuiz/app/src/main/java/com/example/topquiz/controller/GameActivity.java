@@ -19,7 +19,10 @@ import com.example.topquiz.R;
 import com.example.topquiz.model.Question;
 import com.example.topquiz.model.Quiz;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.example.topquiz.controller.MainActivity.SHARED_CURRENT_USER;
 import static com.example.topquiz.controller.MainActivity.SHARED_LAST_SCORE;
@@ -49,8 +52,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     // saved instance's entities in case of rotation for instance
     public static final String BUNDLE_STATE_NAME = "name";
-    public static final String BUNDLE_STATE_SCORE = "currentScore";
-    public static final String BUNDLE_STATE_QUESTION = "currentQuestion";
+    public static final String BUNDLE_STATE_CURRENT_SCORE = "currentScore";
+    public static final String BUNDLE_STATE_CURRENT_QUESTION_LAST = "currentQuestionLast";
+    public static final String BUNDLE_STATE_QUIZ_QUESTION_ORDER = "quizQuestionOrder";
+    public static final String BUNDLE_STATE_QUIZ_QUESTION_INDEX = "quizQuestionIndex";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,22 +87,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // generate Quiz
         mQuiz = this.generateQuiz();
-        System.out.println("mQuiz: " + mQuiz);
 
         if (savedInstanceState != null) {
             System.out.println(">>> Game/Bundle info: " + savedInstanceState);
             mName = savedInstanceState.getString(BUNDLE_STATE_NAME);
-            mScore = savedInstanceState.getInt(BUNDLE_STATE_SCORE);
-            mQuestionsLast = savedInstanceState.getInt(BUNDLE_STATE_QUESTION);
+            mScore = savedInstanceState.getInt(BUNDLE_STATE_CURRENT_SCORE);
+            mQuestionsLast = savedInstanceState.getInt(BUNDLE_STATE_CURRENT_QUESTION_LAST);
+            mQuiz.setQuestionsOrder(savedInstanceState.getIntegerArrayList(BUNDLE_STATE_QUIZ_QUESTION_ORDER));
+            mQuiz.setCurrentIndex(savedInstanceState.getInt(BUNDLE_STATE_QUIZ_QUESTION_INDEX));
         } else {
             System.out.println(">>> Game/preference contents : " + getSharedPreferences(TOPQUIZZ, MODE_PRIVATE).getAll());
             mName = getSharedPreferences(TOPQUIZZ, MODE_PRIVATE).getString(SHARED_CURRENT_USER, "");
             mScore = 0;
-            mQuestionsLast = mQuiz.getmQuestionList().size();
+            mQuestionsLast = mQuiz.getQuestionListSize();
         }
         System.out.println(">>> name: " + mName);
-        //System.out.println(">>> score: " + mScore);
-        //System.out.println(">>> questionIndex: " + mQuestionsLast);
+        System.out.println("mQuiz: " + mQuiz);
+        //System.out.println(">>> question order: " + mQuiz.getQuestionsOrder());
 
         // display name, score and get new Question
         displayName();
@@ -108,18 +114,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         System.out.println(">>> GameActivity::onClick()");
-        int answerTag;
-        answerTag = (int) v.getTag();
-        //int correctTag = mQuiz.getmQuestionList().get(mQuiz.getmQuestionIndex()).getmAnswerCorrectIndex();
-        int correctTag = mQuiz.getmQuestionList().get(mQuiz.getmQuestionIndex()).getmAnswerCorrectIndex();
-        System.out.println(">>> answerTag = " + answerTag + " - correctTag = " + correctTag);
+        int answerTag = (int) v.getTag();
+        int answerIndex = mQuiz.getCurrentQuestion().getAnswerIndex(answerTag);
+        int correctTag = mQuiz.getCurrentQuestion().getAnswerCorrectIndex();
+        System.out.println(">>> answerTag = " + answerTag + " -> answerIndex = " + answerIndex + " - correctTag = " + correctTag);
 
         Toast toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         View view = toast.getView();
         TextView text = (TextView) view.findViewById(android.R.id.message);
         // Here you can do anything with above textview like text.setTextColor(Color.parseColor("#000000"));
         text.setTextSize(text.getTextSize() + 1);
-        if (answerTag == correctTag) {
+        if (answerIndex == correctTag) {
             System.out.println(">>> Answer is correct !!");
             text.setText("Correct!");
             text.setTextColor(Color.GREEN);
@@ -143,7 +148,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 mEnableTouchEvents = true;
 
-                // reset Quiz Index
+                // pull next Quiz Index
                 mQuiz.setNextQuizIndex();
 
                 // check game end
@@ -214,15 +219,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void displayQuestion() {
-        Question question = mQuiz.getmQuestionList().get(mQuiz.getmQuestionIndex());
+        System.out.println(">>> GameActivity::displayScore()");
+        Question question = mQuiz.getCurrentQuestion();
         // Set the text for the question text view and the four buttons
-        //String questionText = question.getmQuestion() + "\n[" + (question.getmAnswerCorrectIndex() + 1) + "]";
-        String questionText = question.getmQuestion();
-        mQuestionText.setText(questionText);
-        mAnswerButton01.setText(question.getmAnswerList().get(0).second);
-        mAnswerButton02.setText(question.getmAnswerList().get(1).second);
-        mAnswerButton03.setText(question.getmAnswerList().get(2).second);
-        mAnswerButton04.setText(question.getmAnswerList().get(3).second);
+        mQuestionText.setText(question.getQuestion());
+        mAnswerButton01.setText(question.getAnswerString(0));
+        mAnswerButton02.setText(question.getAnswerString(1));
+        mAnswerButton03.setText(question.getAnswerString(2));
+        mAnswerButton04.setText(question.getAnswerString(3));
     }
 
     private void displayName() {
@@ -233,7 +237,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         System.out.println(">>> GameActivity::displayScore()");
         System.out.println(">>> score: " + mScore);
         System.out.println(">>> questionIndex: " + mQuestionsLast);
-        int questionMax = mQuiz.getmQuestionList().size();
+        int questionMax = mQuiz.getQuestionListSize();
         int questionIndex = questionMax - mQuestionsLast + 1;
         mScoreText.setText("Score: " + mScore + " Question: " + questionIndex + "/" + questionMax);
     }
@@ -249,7 +253,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // display alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Well done!")
+        builder.setTitle("Well done, " + mName + "!")
                 .setMessage("Your score is " + mScore)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -303,8 +307,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(BUNDLE_STATE_NAME, mName);
-        outState.putInt(BUNDLE_STATE_SCORE, mScore);
-        outState.putInt(BUNDLE_STATE_QUESTION, mQuestionsLast);
+        outState.putInt(BUNDLE_STATE_CURRENT_SCORE, mScore);
+        outState.putInt(BUNDLE_STATE_CURRENT_QUESTION_LAST, mQuestionsLast);
+        outState.putIntegerArrayList(BUNDLE_STATE_QUIZ_QUESTION_ORDER, new ArrayList<Integer>(mQuiz.getQuestionsOrder()));
+        outState.putInt(BUNDLE_STATE_QUIZ_QUESTION_INDEX, mQuiz.getCurrentIndex());
+        System.out.println(outState);
         super.onSaveInstanceState(outState);
     }
 }

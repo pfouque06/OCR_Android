@@ -52,7 +52,7 @@ public class Quiz {
         return this.questions.get(this.questionsOrder.get(currentIndex));
     }
 
-    private void resetQuiz() {
+    public void resetQuiz() {
         currentIndex = 0;
         Collections.shuffle(questionsOrder);
         for( Integer keyIndex : questions.keySet())

@@ -140,8 +140,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 enableTouchEvents = true;
-
-
                 // check game end
                 if ( quiz.getCurrentIndex() == quiz.getQuestionListSize() - 1 ) {
                     endGame();

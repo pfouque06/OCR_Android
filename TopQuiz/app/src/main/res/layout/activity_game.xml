@@ -60,10 +60,11 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        android:textColor="@color/colorAccent"
         android:background="@android:color/white"
-        android:textSize="20sp"
-        android:text="Answer1"/>
+        android:tag="0"
+        android:text="Answer1"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_game_answer2_btn"
@@ -71,10 +72,11 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        android:textColor="@color/colorAccent"
         android:background="@android:color/white"
-        android:textSize="20sp"
-        android:text="Answer2"/>
+        android:tag="1"
+        android:text="Answer2"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_game_answer3_btn"
@@ -82,10 +84,11 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        android:textColor="@color/colorAccent"
         android:background="@android:color/white"
-        android:textSize="20sp"
-        android:text="Answer3"/>
+        android:tag="2"
+        android:text="Answer3"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_game_answer4_btn"
@@ -93,10 +96,11 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        android:textColor="@color/colorAccent"
         android:background="@android:color/white"
-        android:textSize="20sp"
-        android:text="Answer4"/>
+        android:tag="3"
+        android:text="Answer4"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
 
 
 </LinearLayout>
